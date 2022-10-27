@@ -24,6 +24,12 @@ public class MySQLIntegrationTest {
         assertThat(countBefore).isGreaterThan(0);
     }
 
+    @Test
+    void testGetByID() {
+        long countBefore = bookRepository.count();
+        assertThat(countBefore).isGreaterThan(0);
+    }
+
 }
 
 
