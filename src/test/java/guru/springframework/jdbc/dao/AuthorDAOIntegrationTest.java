@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("local")
 @DataJpaTest
@@ -46,5 +47,41 @@ class AuthorDAOIntegrationTest {
         if(authorOptional.isPresent()){
            assertNotNull(author);
         }
+    }
+    @Test
+    void testUpdateAuthor() {
+        Author author = new Author();
+        author.setFirstName("john");
+        author.setLastName("t");
+
+        Optional<Author> saved = authorDAO.saveAutor(author);
+        if(saved.isPresent()){
+            System.out.println(saved.get().getId());
+            saved.get().setLastName("Thompson");
+
+            Optional<Author> updated = authorDAO.updateAutor(saved.get());
+            if(updated.isPresent()) {
+                assertThat(updated.get().getLastName()).isEqualTo("Thompson");
+            }
+        }
+
+
+    }
+
+    @Test
+    void testDeleteAuthor() {
+        Author author = new Author();
+        author.setFirstName("john");
+        author.setLastName("t");
+        Optional<Author> saved = authorDAO.saveAutor(author);
+        if(saved.isPresent()){
+            authorDAO.deleteAuthorById(saved.get().getId());
+            Optional<Author>  deleted = authorDAO.getById(saved.get().getId());
+
+            assertThat(deleted).isEqualTo(Optional.empty());
+
+        }
+
+
     }
 }

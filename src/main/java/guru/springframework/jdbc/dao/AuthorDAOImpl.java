@@ -112,6 +112,72 @@ public class AuthorDAOImpl implements AuthorDAO{
         return authorOptional;
     }
 
+    @Override
+    public Optional<Author> updateAutor(Author author) {
+        Connection connection = null;
+        Statement statement = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Optional<Author> authorOptional = Optional.empty();
+
+        try {
+            connection = dataSource.getConnection();
+            System.out.println(author.toString());
+            preparedStatement = connection.prepareStatement("update author set first_name=? , last_name=? where author.id=?" );
+            preparedStatement.setString(1,author.getFirstName());
+            preparedStatement.setString(2,author.getLastName());
+            preparedStatement.setLong(3,author.getId());
+
+            preparedStatement.execute();
+            authorOptional=this.getById(author.getId());
+
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                this.closeAll(connection,preparedStatement,resultSet);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        return authorOptional;
+    }
+
+    @Override
+    public void deleteAuthorById(Long id) {
+        Connection connection = null;
+        Statement statement = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("Delete from author where id=?" );
+            preparedStatement.setLong(1,id);
+            preparedStatement.execute();
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                this.closeAll(connection,preparedStatement,resultSet);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+
+
+    }
+
     private Optional<Author> getAutor(ResultSet resultSet) throws SQLException {
        Optional<Author> authorOptional = Optional.empty();
         if(resultSet.next()){
