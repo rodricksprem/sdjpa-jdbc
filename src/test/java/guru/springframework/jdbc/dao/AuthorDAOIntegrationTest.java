@@ -38,4 +38,13 @@ class AuthorDAOIntegrationTest {
             assertEquals(authorOptional.get().getId(),2);
         }
     }
+
+    @Test
+    void saveAuthor() {
+        Author author = new Author("rodricks","premkumar");
+        Optional<Author> authorOptional=authorDAO.saveAutor(author);
+        if(authorOptional.isPresent()){
+           assertNotNull(author);
+        }
+    }
 }

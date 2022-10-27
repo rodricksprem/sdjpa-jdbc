@@ -73,6 +73,45 @@ public class AuthorDAOImpl implements AuthorDAO{
 
         return authorOptional;
     }
+
+    @Override
+    public Optional<Author> saveAutor(Author author) {
+        Connection connection = null;
+        Statement statement = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Optional<Author> authorOptional = Optional.empty();
+
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("insert into author (first_name,last_name) values(?,?)" );
+            preparedStatement.setString(1,author.getFirstName());
+            preparedStatement.setString(2,author.getLastName());
+            preparedStatement.execute();
+            statement = connection.createStatement();
+            ResultSet rs=statement.executeQuery("select LAST_INSERT_ID()");
+            if(rs.next()){
+                Long savedId = rs.getLong(1);
+
+                return this.getById(savedId);
+            }
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                this.closeAll(connection,preparedStatement,resultSet);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        return authorOptional;
+    }
+
     private Optional<Author> getAutor(ResultSet resultSet) throws SQLException {
        Optional<Author> authorOptional = Optional.empty();
         if(resultSet.next()){
