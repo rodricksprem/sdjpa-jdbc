@@ -30,4 +30,12 @@ class AuthorDAOIntegrationTest {
             assertEquals(authorOptional.get().getId(),1);
         }
     }
+
+    @Test
+    void getByName() {
+        Optional<Author> authorOptional=authorDAO.getByName("Eric","Evans");
+        if(authorOptional.isPresent()){
+            assertEquals(authorOptional.get().getId(),2);
+        }
+    }
 }

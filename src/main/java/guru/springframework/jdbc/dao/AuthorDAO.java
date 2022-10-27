@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface AuthorDAO {
     Optional<Author> getById(Long id);
+    Optional<Author> getByName(String firstName,String lastName);
+
 }

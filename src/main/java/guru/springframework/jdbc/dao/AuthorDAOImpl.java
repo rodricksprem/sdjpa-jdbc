@@ -4,10 +4,7 @@ import guru.springframework.jdbc.domain.Author;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Optional;
 @Component
 public class AuthorDAOImpl implements AuthorDAO{
@@ -21,33 +18,23 @@ public class AuthorDAOImpl implements AuthorDAO{
     public Optional<Author> getById(Long id) {
 
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Optional<Author> authorOptional = Optional.empty();
 
         try {
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery(" select * from author where id=" + id);
+            preparedStatement = connection.prepareStatement(" select * from author where id=?" );
+            preparedStatement.setLong(1,id);
+            resultSet = preparedStatement.executeQuery();
+            authorOptional=this.getAutor(resultSet);
 
-            if (resultSet.next()) {
-                Author author = new Author();
-                author.setId(resultSet.getLong(1));
-                author.setFirstName(resultSet.getString(2));
-                author.setLastName(resultSet.getString(3));
-                authorOptional=Optional.of(author);
-            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
             try {
-                resultSet.close();
-
-                statement.close();
-                connection.close();
-
-
+                this.closeAll(connection,preparedStatement,resultSet);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -56,4 +43,57 @@ public class AuthorDAOImpl implements AuthorDAO{
       return authorOptional;
     }
 
+    @Override
+    public Optional<Author> getByName(String firstName, String lastName) {
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Optional<Author> authorOptional = Optional.empty();
+
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(" select * from author where first_name like ? and last_name like ?" );
+            preparedStatement.setString(1,firstName);
+            preparedStatement.setString(2,lastName);
+            resultSet = preparedStatement.executeQuery();
+            authorOptional=this.getAutor(resultSet);
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                this.closeAll(connection,preparedStatement,resultSet);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        return authorOptional;
+    }
+    private Optional<Author> getAutor(ResultSet resultSet) throws SQLException {
+       Optional<Author> authorOptional = Optional.empty();
+        if(resultSet.next()){
+            Author author = new Author();
+            author.setId(resultSet.getLong(1));
+            author.setFirstName(resultSet.getString(2));
+            author.setLastName(resultSet.getString(3));
+            authorOptional=Optional.of(author);
+        }
+        return authorOptional;
+    }
+
+    private void closeAll(Connection connection,PreparedStatement preparedStatement, ResultSet resultSet) throws SQLException {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
 }
