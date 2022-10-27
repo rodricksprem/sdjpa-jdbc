@@ -5,10 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -24,6 +21,7 @@ public class Author {
 
     private String firstName;
     private String lastName;
+
 
     public Author(String firstName, String lastName) {
         this.firstName = firstName;

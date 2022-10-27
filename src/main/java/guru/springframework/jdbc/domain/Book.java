@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -23,7 +20,8 @@ public class Book {
     private String title;
     private String isbn;
     private String publisher;
-    private Long authorId;
+    @Transient
+    private Author authorId;
 
 
     public Book(String title, String isbn, String publisher) {
@@ -45,6 +43,13 @@ public class Book {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    public Author getAuthor(){
+        return this.authorId;
+    }
+    public void setAuthor(Author authorId){
+        this.authorId=authorId;
     }
 
 }
