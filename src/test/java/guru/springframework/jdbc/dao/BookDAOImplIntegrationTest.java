@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -39,6 +40,7 @@ class BookDAOImplIntegrationTest {
     }
 
     @Test
+    @Transactional
     void saveNewBook() {
         Book book = new Book();
         book.setIsbn("1235");
@@ -46,7 +48,7 @@ class BookDAOImplIntegrationTest {
         book.setTitle("my book1");
 
         Author author = new Author();
-        author.setId(4L);
+        author.setId(5L);
 
         book.setAuthor(author);
         Optional<Book> savedOptional = bookDAO.saveNewBook(book);

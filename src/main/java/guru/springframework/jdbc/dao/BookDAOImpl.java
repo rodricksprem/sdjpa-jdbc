@@ -90,7 +90,7 @@ public class BookDAOImpl implements BookDAO{
             {
                 preparedStatement.setLong(4,book.getAuthor().getId());
             }else{
-                preparedStatement.setLong(4,-1);
+                    preparedStatement.setNull(4,-5);
             }
             preparedStatement.execute();
             statement = connection.createStatement();
@@ -197,8 +197,7 @@ public class BookDAOImpl implements BookDAO{
             book.setIsbn(resultSet.getString(2));
             book.setPublisher(resultSet.getString(3));
             book.setTitle(resultSet.getString(4));
-            Long authorId= resultSet.getLong(5);
-            Optional<Author> authorOptional = authorDAO.getById(authorId);
+            Optional<Author> authorOptional = authorDAO.getById(resultSet.getLong(5));
             if(authorOptional.isPresent())
             {
                 book.setAuthor(authorOptional.get());
