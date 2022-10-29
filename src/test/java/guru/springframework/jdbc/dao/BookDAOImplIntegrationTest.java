@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+
 @ActiveProfiles("local")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -23,19 +24,20 @@ class BookDAOImplIntegrationTest {
     BookDAO bookDAO;
     @Autowired
     AuthorDAO authorDAO;
+
     @Test
     void getById() {
-        Optional<Book> bookOptional=bookDAO.getById(1L);
-        if(bookOptional.isPresent()){
-            assertEquals(bookOptional.get().getId(),1);
+        Optional<Book> bookOptional = bookDAO.getById(1L);
+        if (bookOptional.isPresent()) {
+            assertEquals(bookOptional.get().getId(), 1);
         }
     }
 
     @Test
     void findBookByTitle() {
-        Optional<Book> bookOptional=bookDAO.findBookByTitle("Spring in Action, 6th Edition");
-        if(bookOptional.isPresent()){
-            assertEquals(bookOptional.get().getId(),3);
+        Optional<Book> bookOptional = bookDAO.findBookByTitle("Spring in Action, 6th Edition");
+        if (bookOptional.isPresent()) {
+            assertEquals(bookOptional.get().getId(), 3);
         }
     }
 
@@ -54,8 +56,7 @@ class BookDAOImplIntegrationTest {
         if (savedOptional.isPresent()) {
             Book saved = savedOptional.get();
             assertThat(saved.getTitle()).isEqualTo("my book1");
-                }
-
+        }
 
 
     }
@@ -73,19 +74,13 @@ class BookDAOImplIntegrationTest {
         book.setAuthor(author);
 
         Optional<Book> savedOptional = bookDAO.saveNewBook(book);
-        if (savedOptional.isPresent()) {
-            Book saved = savedOptional.get();
-            saved.setTitle("New Book");
-            Optional<Book> updateBookOptional = bookDAO.updateBook(saved);
-            if (updateBookOptional.isPresent()) {
 
-                Optional<Book> fetched = bookDAO.getById(updateBookOptional.get().getId());
-                if (fetched.isPresent()) {
-                    assertThat(fetched.get().getTitle()).isEqualTo("New Book");
-                }
+        Book saved = savedOptional.get();
+        saved.setTitle("New Book");
+        Optional<Book> updateBookOptional = bookDAO.updateBook(saved);
+        Optional<Book> fetched = bookDAO.getById(updateBookOptional.get().getId());
 
-            }
-        }
+        assertThat(fetched.get().getTitle()).isEqualTo("New Book1");
     }
 
 
