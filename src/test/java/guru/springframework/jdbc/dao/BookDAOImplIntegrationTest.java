@@ -40,7 +40,6 @@ class BookDAOImplIntegrationTest {
     }
 
     @Test
-    @Transactional
     void saveNewBook() {
         Book book = new Book();
         book.setIsbn("1235");
